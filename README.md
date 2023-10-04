@@ -1,5 +1,7 @@
 # LLMs on the Edge
 
+## About
+
 ## Meet the Team
 * Timothy Oei
 * Zackary Kiener
