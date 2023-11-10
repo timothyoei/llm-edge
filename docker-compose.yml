@@ -1,0 +1,17 @@
+version: "3"
+services:
+  llm_edge:
+    environment:
+      - VSCODE_REMOTE_USER=user
+    build:
+      context: .
+    volumes:
+      - .:/playground
+    networks:
+      - llm_edge_playground
+    ports:
+      - "8888:8888"
+    tty: true
+networks:
+  llm_edge_playground:
+    driver: bridge
