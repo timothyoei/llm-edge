@@ -1,0 +1,9 @@
+{
+  "name": "LLM EDGE",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "llm_edge",
+  "workspaceFolder": "/playground",
+  "forwardPorts": [
+    8888
+  ]
+}

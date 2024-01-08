@@ -1,8 +1,6 @@
 version: "3"
 services:
   llm_edge:
-    environment:
-      - VSCODE_REMOTE_USER=user
     build:
       context: .
     volumes:
