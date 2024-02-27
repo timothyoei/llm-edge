@@ -1,0 +1,6 @@
+Flask
+flasgger
+python-dotenv
+Flask-JWT-Extended
+cryptography
+gunicorn

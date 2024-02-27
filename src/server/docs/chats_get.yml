@@ -1,0 +1,28 @@
+parameters:
+  - in: header
+    name: Authorization
+    required: true
+    description: The JWT token for the user that this chat belongs to
+    type: string
+    default: Bearer JWT_TOKEN
+responses:
+  200:
+    description: Chats belonging to the authenticated user
+    schema:
+      properties:
+        _id:
+          type: string
+          description: The chat's unique ID
+        title:
+          type: string
+          description: The title of the chat
+        email:
+          type: string
+          description: The email that this chat belongs to
+  400:
+    description: Invalid data
+    schema:
+      properties:
+        error:
+          type: string
+          description: Error message

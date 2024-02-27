@@ -1,0 +1,49 @@
+parameters:
+  - in: header
+    name: Authorization
+    required: true
+    description: The JWT token for the user that this chat belongs to
+    type: string
+    default: Bearer JWT_TOKEN
+  - in: body
+    name: Body
+    required: true
+    description: Data of new chat
+    schema:
+      properties:
+        init_query:
+          type: string
+          description: Initial query of chat
+responses:
+  200:
+    description: Chat details
+    schema:
+      properties:
+        _id:
+          type: string
+          description: The chat's unique ID
+        title:
+          type: string
+          description: The title of the chat
+        email:
+          type: string
+          description: The email that this chat belongs to
+        history:
+          type: array
+          items:
+            type: object
+            properties:
+              query:
+                type: string
+                description: The input to the model
+              response:
+                type: string
+                description: The output of the model
+  204:
+    description: Chat details
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Deletion result
