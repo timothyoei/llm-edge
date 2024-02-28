@@ -1,2 +1,6 @@
 **/*.chk
+**/node_modules
+**/cache
 **/__pycache__
+**/.env
+src/server/data

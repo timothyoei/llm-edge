@@ -8,7 +8,8 @@ services:
     networks:
       - llm_edge_playground
     ports:
-      - "8888:8888"
+      - "5000:5000"
+      - "8000:8000"
     tty: true
 networks:
   llm_edge_playground:

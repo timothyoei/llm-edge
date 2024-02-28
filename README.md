@@ -1,5 +1,5 @@
 # LLMs on the Edge
-Large-language models (LLMs) are on the pareto frontier of machine learning. Their size, however, makes them inaccessible to those with modest devices and limited compute resources. This project aims to bridge this gap by applying several model optimization techniques to reduce the computational complexity of LLMs, making them small enough, yet still powerful, to run on EDGE devices. We demonstrate this by hosting a Llama2 7-billion parameter model on an NVIDIA Jetson Xavier that allows for interfacing through a portable UI. This project is part of UCF Senior Design class sequence (i.e., COP 4934 & COP 4935).
+Large-language models (LLMs) are on the pareto frontier of machine learning. Their size, however, makes them inaccessible to those with modest devices and limited compute resources. This project aims to bridge this gap by applying several model optimization techniques to reduce the computational complexity of LLMs, making them small enough, yet still powerful, to run on EDGE devices. We demonstrate this by hosting a Llama2 7-billion parameter model on an NVIDIA Jetson Xavier that allows chat-like interfacing through a portable UI. This project is part of UCF's Senior Design class sequence (i.e., COP 4934 & COP 4935).
 
 ## Meet the Team
 * Christian Cooper - Project Manager
