@@ -17,7 +17,7 @@ const Signup = () =>{
 
         try{
             //port number?
-            await axios.post("http://localhost:5001/api/users",{
+            await axios.post("http://localhost:8000/api/users",{
                 "username": User,
                 "password": Password,
                 "email": Email

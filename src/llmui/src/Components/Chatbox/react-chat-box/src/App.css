@@ -1,0 +1,118 @@
+
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+.App {
+  text-align: center;
+  min-height: 100vh;
+ 
+
+}
+
+.chat-container {
+  max-width: 600px;
+  margin: auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+
+}
+
+.chat-header {
+  background-color: transparent;
+  color: #fff;
+  
+  text-align: center;
+  margin-top: 10px;
+}
+
+.chat-messages {
+  padding: 15px;
+  overflow-y: scroll;
+  height: 30rem;
+  display: flex;
+  flex-direction: column;
+  
+  
+}
+
+.message {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  width:fit-content;
+  max-width: 60%; /* Set your desired maximum width */
+  word-wrap: break-word;
+}
+
+.user-message {
+  background-color: #347fd4;
+  color: #fff;
+  align-self: flex-end;
+  
+  margin: 5px;
+  padding: 10px;
+  border-radius: 10px;
+
+}
+
+.gpt-message {
+  background-color: rgba(43, 38, 38, 0.751) ;
+  color: #fff;
+  align-self: flex-start;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.chat-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: transparent;
+  border-top: 1px solid #ccc;
+}
+
+.message-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 8px;
+  
+}
+
+.send-button {
+  background-color: white;
+  color: black;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Optional: Style scrollbar */
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: white; 
+  border-radius: 4px;
+}
+
+.message-input::-webkit-scrollbar {
+  display: none;
+}
+
+
+.chat-messages::-webkit-scrollbar-track {
+  
+}
