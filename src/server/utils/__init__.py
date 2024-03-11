@@ -7,6 +7,8 @@ import json
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
 from cryptography.fernet import Fernet
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 
 # ============================================
 # AUTHORIZATION HELPERS
@@ -53,9 +55,6 @@ def get_db():
   return g.db
 
 def write_db(new_db):
-  for key, value in new_db.items():
-    if isinstance(value, bytes):
-        data[key] = value.decode('utf-8')
   with open(current_app.config["API_DB_PATH"], "w") as f:
     json.dump(new_db, f, indent=4)
 
@@ -63,15 +62,37 @@ def write_db(new_db):
 # MODEL HELPERS
 # ============================================
 
-def init_model(app):
-  return
+def init_model(app, model_path):
+  compute_dtype = getattr(torch, "float16")
+  bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_use_double_quant=False,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_compute_dtype=compute_dtype
+  )
+  app.config["API_MODEL"] = AutoModelForCausalLM.from_pretrained(
+    model_path,
+    quantization_config=bnb_config,
+    device_map="auto")
+  app.config["API_MODEL_TOKENIZER"] = AutoTokenizer.from_pretrained(model_path)
 
 def get_model():
-  return
+  if "model" not in g:
+    g.model = (current_app.config["API_MODEL"], current_app.config["API_MODEL_TOKENIZER"])
+  return g.model
 
 def gen_response(system_msg, prompt):
-  # GENERATE RESPONSE HERE
-  return "TEST RESPONSE"
+  model, tokenizer = get_model()
+  
+  input_ids = tokenizer(prompt, return_tensors="pt", truncation=True).input_ids
+  outputs = model.generate(
+    input_ids=input_ids,
+    max_new_tokens=200,
+    temperature=0.1
+  )
+  result = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
+
+  return result
 
 # ============================================
 # INITIALIZATION HELPER
@@ -79,14 +100,23 @@ def gen_response(system_msg, prompt):
 
 def init_app():
   load_dotenv()
+  is_prod = os.getenv("API_IS_PROD", "FALSE") == "TRUE"
 
   app = Flask(os.getenv("API_NAME"))
   app.config["API_PORT"] = os.getenv("API_PORT")
-  init_db(app, "data/data.json" if os.getenv("API_ENV", "DEV") == "PROD" else "src/server/data/data.json")
+
+  data_path = "data/data.json" if is_prod else "src/server/data/data.json"
+  init_db(app, data_path)
+
   config_auth(app, os.getenv("API_JWT_KEY"))
+
   init_crypter(app, os.getenv("API_CRYPT_KEY"))
-  init_model(app)
+
+  model_path = "model" if is_prod else "src/server/model"
+  init_model(app, model_path)
+
   swagger = Swagger(app)
+
   register_routes(app, os.getenv("API_URL_PREFIX"))
 
   return app

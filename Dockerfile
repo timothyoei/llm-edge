@@ -15,21 +15,16 @@ RUN apt-get autoclean -y && apt-get autoremove -y
 # ==================================
 RUN apt-get install -y \
   python3 \
-  pip \
-  curl
+  pip
 
 COPY src/server/requirements.txt src/server/requirements.txt
-RUN pip install -r src/server/requirements.txt
-
-# Install httpie
-RUN curl -SsL https://packages.httpie.io/deb/KEY.gpg | gpg --dearmor -o /usr/share/keyrings/httpie.gpg
-RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/httpie.gpg] https://packages.httpie.io/deb ./" > /etc/apt/sources.list.d/httpie.list
-RUN apt-get update -y && apt-get install -y httpie
+RUN pip install --upgrade pip && pip install -r src/server/requirements.txt
 
 # INSTALL FRONTEND REQUIREMENTS
 # ==================================
 RUN apt install -y \
   ca-certificates \
+  curl \
   gnupg
 
 # Install latest version of node
