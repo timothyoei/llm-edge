@@ -4,3 +4,6 @@ python-dotenv
 Flask-JWT-Extended
 cryptography
 gunicorn
+torch
+transformers
+bitsandbytes
