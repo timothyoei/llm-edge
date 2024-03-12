@@ -40,7 +40,14 @@ def users():
             type: array
             description: The user's chats
     400:
-      description: Bad request
+      description: Missing required data
+      schema:
+        properties:
+          error:
+            type: string
+            description: Error message
+    409:
+      description: Username already taken
       schema:
         properties:
           error:
@@ -70,14 +77,14 @@ def users_post_handler():
   # Check if the username is already taken
   db = get_db()
   if data["username"] in db["users"]:
-    return jsonify({"error": "Username already taken"}), 400
+    return jsonify({"error": "Username already taken"}), 409
 
   # Create a new user
   new_user = {
     "password": crypter_encrypt(data["password"]),
-    "theme": "dark",
+    "theme": crypter_encrypt("dark"),
+    "system_msg": crypter_encrypt("TEST SYSTEM MESSAGE"),
     "chats": [],
-    "system_msg": crypter_encrypt("TEST SYSTEM MESSAGE")
   }
   db["users"][data["username"]] = new_user
   write_db(db)

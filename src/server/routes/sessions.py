@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required
-from utils import get_db, crypter_encrypt, crypter_decrypt
+from utils import get_db, crypter_encrypt, crypter_decrypt, crypter_decrypt_user
 
 sessions_bp = Blueprint("sessions", __name__)
 
@@ -48,7 +48,7 @@ def sessions():
             type: string
             description: The user's authentication token
     400:
-      description: Bad request
+      description: Missing required data
       schema:
         properties:
           error:
@@ -56,6 +56,13 @@ def sessions():
             description: Error message
     401:
       description: Password mismatch
+      schema:
+        properties:
+          error:
+            type: string
+            description: Error message
+    404:
+      description: User does not exist
       schema:
         properties:
           error:
@@ -79,7 +86,7 @@ def sessions_post_handler():
   db = get_db()
   username = data["username"]
   if username not in db["users"]:
-    return jsonify({"error": "User does not exist"}), 400
+    return jsonify({"error": "User does not exist"}), 404
 
   # Check if the password matches
   user = db["users"][username]
@@ -94,4 +101,4 @@ def sessions_post_handler():
   for f in del_fields:
     user.pop(f)
 
-  return jsonify({"user": user, "token": access_token}), 200
+  return jsonify({"user": crypter_decrypt_user(user), "token": access_token}), 200

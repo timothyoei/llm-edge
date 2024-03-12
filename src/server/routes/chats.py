@@ -19,24 +19,25 @@ def chats():
 def chats_get_handler(db):
   username = get_jwt_identity()
   if username not in db["users"]:
-    return jsonify({"error": "User not found"}), 400
+    return jsonify({"error": "User not found"}), 404
   return jsonify({"chats": db["users"][username]["chats"]}), 200
 
 def chats_post_handler(db):
   # Validate incoming data
   username = get_jwt_identity()
   if username not in db["users"]:
-    return jsonify({"error": "User not found"}), 400
+    return jsonify({"error": "User not found"}), 404
 
   # Insert new chat
+  default_title = "New Chat"
   new_chat = {
-    "title": "TEST TITLE",
+    "title": crypter_encrypt(default_title),
     "history": []
   }
   db["users"][username]["chats"].append(new_chat)
   write_db(db)
 
-  return jsonify(new_chat), 201
+  return jsonify({"chat": {"title": default_title, "history": []}}), 201
 
 @chats_bp.route("/chats/<int:chat_idx>", methods=["GET", "POST", "DELETE"])
 @jwt_required()
@@ -118,17 +119,17 @@ def chat_post_handler(chat_idx, db):
   req_fields = ["query"]
   for f in req_fields:
     if not data.get(f):
-      return jsonify({"error": f"{f} field missing"}), 400  
+      return jsonify({"error": f"{f} field missing"}), 400
 
   # Verify identity
   username = get_jwt_identity()
   if username not in db["users"]:
-    return jsonify({"error": "User not found"}), 400
+    return jsonify({"error": "User not found"}), 409
 
   # Check if chat exists
   chats = db["users"][username]["chats"]
   if chat_idx >= len(chats):
-    return jsonify({"error": "Chat not found"}), 400
+    return jsonify({"error": "Chat not found"}), 409
 
   # Add new chat to history
   res = gen_response(crypter_decrypt(db["users"][username]["system_msg"]), data["query"])

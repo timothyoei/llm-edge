@@ -7,8 +7,15 @@ import json
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
 from cryptography.fernet import Fernet
+from flask_cors import CORS
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+
+# ============================================
+# CORS HELPERS
+# ============================================
+def init_cors(app):
+  CORS(app)
 
 # ============================================
 # AUTHORIZATION HELPERS
@@ -22,6 +29,7 @@ def config_auth(app, key):
 # ============================================
 # CRYPTOGRAPHY HELPERS
 # ============================================
+
 def init_crypter(app, key):
   app.config["API_CRYPT_KEY"] = key
   with app.app_context():
@@ -38,9 +46,20 @@ def crypter_encrypt(data):
 def crypter_decrypt(data):
   return get_crypter().decrypt(data).decode()
 
+def crypter_decrypt_user(user):
+  user["theme"] = crypter_decrypt(user["theme"])
+  user["system_msg"] = crypter_decrypt(user["system_msg"])
+  for chat in user["chats"]:
+    chat["title"] = crypter_decrypt(chat["title"])
+    for qa in chat["history"]:
+      qa["query"] = crypter_decrypt(qa["query"])
+      qa["response"] = crypter_decrypt(qa["response"])
+  return user
+
 # ============================================
 # DATABASE HELPERS
 # ============================================
+
 def init_db(app, db_path):
   app.config["API_DB_PATH"] = db_path
   with app.app_context():
@@ -82,17 +101,17 @@ def get_model():
   return g.model
 
 def gen_response(system_msg, prompt):
-  model, tokenizer = get_model()
+  # model, tokenizer = get_model()
   
-  input_ids = tokenizer(prompt, return_tensors="pt", truncation=True).input_ids
-  outputs = model.generate(
-    input_ids=input_ids,
-    max_new_tokens=200,
-    temperature=0.1
-  )
-  result = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
+  # input_ids = tokenizer(prompt, return_tensors="pt", truncation=True).input_ids
+  # outputs = model.generate(
+  #   input_ids=input_ids,
+  #   max_new_tokens=200,
+  #   temperature=0.1
+  # )
+  # result = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
 
-  return result
+  return "SIMULATED MODEL RESPONSE"
 
 # ============================================
 # INITIALIZATION HELPER
@@ -108,12 +127,14 @@ def init_app():
   data_path = "data/data.json" if is_prod else "src/server/data/data.json"
   init_db(app, data_path)
 
+  init_cors(app)
+
   config_auth(app, os.getenv("API_JWT_KEY"))
 
   init_crypter(app, os.getenv("API_CRYPT_KEY"))
 
   model_path = "model" if is_prod else "src/server/model"
-  init_model(app, model_path)
+  # init_model(app, model_path)
 
   swagger = Swagger(app)
 
