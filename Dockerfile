@@ -15,7 +15,8 @@ RUN apt-get autoclean -y && apt-get autoremove -y
 # ==================================
 RUN apt-get install -y \
   python3 \
-  pip
+  pip \
+  lsof
 
 COPY src/server/requirements.txt src/server/requirements.txt
 RUN pip install --upgrade pip && pip install -r src/server/requirements.txt

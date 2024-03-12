@@ -3,4 +3,4 @@
 **/cache
 **/__pycache__
 **/.env
-src/server/data
+**/data.json
