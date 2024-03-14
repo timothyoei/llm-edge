@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
 WORKDIR /playground
 
@@ -16,16 +16,22 @@ RUN apt-get autoclean -y && apt-get autoremove -y
 RUN apt-get install -y \
   python3 \
   pip \
-  lsof
+  lsof \
+  curl \
+  tar
 
-COPY src/server/requirements.txt src/server/requirements.txt
-RUN pip install --upgrade pip && pip install -r src/server/requirements.txt
+# Install micromamba
+RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/micromamba && mv bin/micromamba ../bin/micromamba
+RUN ../bin/micromamba shell init -s bash -p ~/micromamba
+
+# Create a virtual environment
+COPY src/server/env.yml src/server/env.yml  
+RUN micromamba env create -f src/server/env.yml -y
 
 # INSTALL FRONTEND REQUIREMENTS
 # ==================================
 RUN apt install -y \
   ca-certificates \
-  curl \
   gnupg
 
 # Install latest version of node
