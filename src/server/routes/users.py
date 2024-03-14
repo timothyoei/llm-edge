@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from utils import get_db, write_db, crypter_encrypt, crypter_decrypt
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 users_bp = Blueprint("users", __name__)
 
@@ -61,21 +62,21 @@ def users():
             type: string
             description: Error message
   """
-  if request.method == "POST":
-    return users_post_handler()
-
-def users_post_handler():
-  # Validate incoming data
   data = request.get_json()
   if not data:
     return jsonify({"error": "Data missing"}), 400
+  db = get_db()
+  if request.method == "POST":
+    return users_post_handler(data, db)
+
+def users_post_handler(data, db):
+  # Validate incoming data
   req_fields = ["username", "password"]
   for f in req_fields:
     if not data.get(f):
       return jsonify({"error": f"{f} field missing"}), 400
 
   # Check if the username is already taken
-  db = get_db()
   if data["username"] in db["users"]:
     return jsonify({"error": "Username already taken"}), 409
 
@@ -95,3 +96,37 @@ def users_post_handler():
     new_user.pop(f)
   
   return new_user, 201
+
+@users_bp.route("/users/user", methods=["PATCH", "DELETE"])
+@jwt_required()
+def user():
+  # Verify identity
+  username = get_jwt_identity()
+  db = get_db()
+  if username not in db["users"]:
+    return jsonify({"error": "User not found"}), 404
+
+  # Dispatch to request method handlers
+  if request.method == "PATCH":
+    return user_patch_handler(username, db)
+  elif request.method == "DELETE":
+    return user_delete_handler(username, db)
+
+def user_patch_handler(username, db):
+  # Validate incoming data
+  data = request.get_json()
+  if not data:
+    return jsonify({"error": "Data missing"}), 400
+
+  for f in data:
+    if not data.get(f):
+      return jsonify({"error": f"{f} field is not valid"}), 400
+    else:
+      db["users"][username][f] = crypter_encrypt(data[f])
+  write_db(db)
+  return jsonify({"message": "Successfully updated user"}), 200
+
+def user_delete_handler(username, db):
+  db["users"].pop(username, None)
+  write_db(db)
+  return jsonify({"message": "Successfully deleted user"}), 200
