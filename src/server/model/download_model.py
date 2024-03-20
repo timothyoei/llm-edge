@@ -1,10 +1,18 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
+from transformers import AutoTokenizer, AutoModelForCausalLM
 import os
 from dotenv import load_dotenv
+import torch
+print(torch.__version__)
+from unsloth import FastLanguageModel
 
 def download_model(model_id, model_path, access_token):
-  tokenizer = AutoTokenizer.from_pretrained(model_id, token=access_token)
-  model = AutoModelForCausalLM.from_pretrained(model_id, token=access_token)
+  model, tokenizer = FastLanguageModel.from_pretrained(
+    model_name=model_id,
+    max_seq_length=2048,
+    dtype=None,
+    load_in_4bit=True,
+    access_token=access_token
+  )
 
   tokenizer.save_pretrained(model_path)
   model.save_pretrained(model_path)
@@ -25,5 +33,5 @@ if __name__ == "__main__":
   access_token = os.getenv("HF_TOKEN")
   download_model(model_id, model_path, access_token)
 
-  query = "What color is the sky?"
-  print(test_model(query, model_path))
+  # query = "What color is the sky?"
+  # print(test_model(query, model_path))

@@ -1,0 +1,40 @@
+.Chat {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #3a3a5a;
+  padding: 0px 2px;
+  margin: 2px 0px;
+  cursor: pointer;
+}
+
+.Chat-selected {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #7171b1;
+  border-radius: 5px;
+  padding: 0px 2px;
+  margin: 2px 0px;
+  cursor: pointer;
+}
+
+.Chat:hover {
+  background-color: #575788;
+  border-radius: 5px;
+}
+
+.Chat-title {
+  cursor: pointer;
+  margin: 5px;
+  height: 20px;
+}
+
+.Chat-delete {
+  width: 20px;
+  height: 20px;
+}
+
+.Chat-delete:hover {
+  filter: invert(100%);
+}

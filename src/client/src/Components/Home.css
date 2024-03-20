@@ -1,54 +1,77 @@
+.Home {
+  background-image: url("../Assets/herobg.png");
+  display: flex;
+}
+
+/* CHAT CONTROLLER */
+
+.chat-controller {
+  padding: 10px;
+  background-color: #3a3a5a;
+}
+
+.chat-create {
+  font-style: oblique;
+  font-family: 'Courier New', Courier, monospace;
+  margin: 1px 0px;
+  padding: 0px 5px;
+}
+
+.chat-create:hover {
+  background-color: #575788;
+  border-radius: 5px;
+  margin: 1px 0px;
+  padding: 0px 5px;
+}
+
+/* CHATBOX */
+
 .chat-container {
+  display: inline-block;
+  vertical-align: top;
   max-width: 600px;
   margin: auto;
   border: 1px solid #ccc;
   border-radius: 8px;
   overflow: hidden;
-
 }
 
 .chat-header {
-  background-color: transparent;
-  color: #fff;
-  
   text-align: center;
-  margin-top: 10px;
+  margin: 5px 0px;
 }
 
 .chat-messages {
+  display: flex;
   padding: 15px;
   overflow-y: scroll;
   height: 30rem;
   display: flex;
   flex-direction: column;
-  
-  
 }
 
-.message {
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  width:fit-content;
-  max-width: 60%;
-  word-wrap: break-word;
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: white; 
+  border-radius: 4px;
 }
 
 .user-message {
   background-color: #347fd4;
   color: #fff;
   align-self: flex-end;
-  
   margin: 5px;
   padding: 10px;
   border-radius: 10px;
-
 }
 
-.gpt-message {
-  background-color: rgba(43, 38, 38, 0.751) ;
+.response-message {
+  background-color: #94a6bb;
   color: #fff;
-  align-self: flex-start;
+  align-self: flex-end;
   margin: 5px;
   padding: 10px;
   border-radius: 10px;
@@ -63,17 +86,16 @@
   border-top: 1px solid #ccc;
 }
 
-.chat-controller {
-  padding: 10px;
-}
-
 .message-input {
   flex: 1;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  margin-right: 8px;
-  
+  margin-right: 8px; 
+}
+
+.message-input::-webkit-scrollbar {
+  display: none;
 }
 
 .send-button {
@@ -83,22 +105,4 @@
   padding: 8px 12px;
   border-radius: 4px;
   cursor: pointer;
-}
-
-.chat-messages::-webkit-scrollbar {
-  width: 8px;
-}
-
-.chat-messages::-webkit-scrollbar-thumb {
-  background-color: white; 
-  border-radius: 4px;
-}
-
-.message-input::-webkit-scrollbar {
-  display: none;
-}
-
-
-.chat-messages::-webkit-scrollbar-track {
-  
 }

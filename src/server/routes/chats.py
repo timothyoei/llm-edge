@@ -88,34 +88,34 @@ def chat(chat_idx):
             type: string
             description: Deletion result
   """
+  # Verify identity
+  db = get_db()
+  username = get_jwt_identity()
+  if username not in db["users"]:
+    return jsonify({"error": "Authentication failed"}), 404
+
+  # Check if chat exists
+  if chat_idx >= len(db["users"][username]["chats"]):
+    return jsonify({"error": "Chat not found"}), 400
+  
+  if request.method == "GET":
+    return chat_get_handler(chat_idx, username, db)
+  elif request.method == "POST":
+    return chat_post_handler(chat_idx, username, db)
+  elif request.method == "PATCH":
+    return chat_patch_handler(chat_idx, username, db)
+  elif request.method == "DELETE":
+    return chat_delete_handler(chat_idx, username, db)
+
+def chat_get_handler(chat_idx, username, db):
+  return db["users"][username]["chats"][chat_idx], 200
+
+def chat_post_handler(chat_idx, username, db):
   # Validate incoming data
   data = request.get_json()
   if not data:
     return jsonify({"error": "Data missing"}), 400
 
-  # Verify identity
-  db = get_db()
-  username = get_jwt_identity()
-  if username not in db["users"]:
-    return jsonify({"error": "Authentication failed"}), 400
-
-  # Check if chat exists
-  if chat_idx >= len(db["users"][username]["chats"]):
-    return jsonify({"error": "Chat not found"}), 400  
-  
-  if request.method == "GET":
-    return chat_get_handler(chat_idx, data, username, db)
-  elif request.method == "POST":
-    return chat_post_handler(chat_idx, data, username, db)
-  elif request.method == "PATCH":
-    return chat_patch_handler(chat_idx, data, username, db)
-  elif request.method == "DELETE":
-    return chat_delete_handler(chat_idx, data, username, db)
-
-def chat_get_handler(chat_idx, data, username, db):
-  return db["users"][username]["chats"][chat_idx], 200
-
-def chat_post_handler(chat_idx, data, username, db):
   # Validate incoming data
   req_fields = ["query"]
   for f in req_fields:
@@ -128,11 +128,16 @@ def chat_post_handler(chat_idx, data, username, db):
     "query": crypter_encrypt(data["query"]),
     "response": crypter_encrypt(res)
   }
-  chats[chat_idx]["history"].append(new_chat)
+  db["users"][username]["chats"][chat_idx]["history"].append(new_chat)
   write_db(db)
   return jsonify({"response": res}), 200
 
-def chat_patch_handler(chat_idx, data, username, db):
+def chat_patch_handler(chat_idx, username, db):
+  # Validate incoming data
+  data = request.get_json()
+  if not data:
+    return jsonify({"error": "Data missing"}), 400
+
   # Validate incoming data
   for f in data:
     if not data.get(f):
@@ -142,7 +147,7 @@ def chat_patch_handler(chat_idx, data, username, db):
   write_db(db)
   return jsonify({"message": "Successfully updated chat"}), 200
 
-def chat_delete_handler(chat_idx, data, username, db):
+def chat_delete_handler(chat_idx, username, db):
   db["users"][username]["chats"].pop(chat_idx)
   write_db(db)
   return jsonify({"message": "Successfully deleted chat"}), 200
