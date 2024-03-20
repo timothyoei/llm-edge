@@ -25,6 +25,7 @@
 }
 
 .Chat-title {
+  font-size: 15px;
   cursor: pointer;
   margin: 5px;
   height: 20px;

@@ -1,18 +1,18 @@
 .Home {
   background-image: url("../Assets/herobg.png");
   display: flex;
+  min-height: 100vh;
 }
 
 /* CHAT CONTROLLER */
-
 .chat-controller {
-  padding: 10px;
   background-color: #3a3a5a;
+  padding: 10px;
 }
 
 .chat-create {
-  font-style: oblique;
   font-family: 'Courier New', Courier, monospace;
+  font-style: oblique;
   margin: 1px 0px;
   padding: 0px 5px;
 }
@@ -24,16 +24,13 @@
   padding: 0px 5px;
 }
 
-/* CHATBOX */
-
+/* CHAT BOX */
 .chat-container {
-  display: inline-block;
-  vertical-align: top;
-  max-width: 600px;
+  min-width: 500px;
+  max-width: 500px;
   margin: auto;
   border: 1px solid #ccc;
   border-radius: 8px;
-  overflow: hidden;
 }
 
 .chat-header {
@@ -42,12 +39,9 @@
 }
 
 .chat-messages {
-  display: flex;
   padding: 15px;
-  overflow-y: scroll;
   height: 30rem;
-  display: flex;
-  flex-direction: column;
+  overflow-y: scroll;
 }
 
 .chat-messages::-webkit-scrollbar {
@@ -59,22 +53,29 @@
   border-radius: 4px;
 }
 
+.chat-message {
+  display: flex;
+  flex-direction: column;
+}
+
 .user-message {
+  align-self: flex-end;
   background-color: #347fd4;
   color: #fff;
-  align-self: flex-end;
   margin: 5px;
   padding: 10px;
   border-radius: 10px;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .response-message {
   background-color: #94a6bb;
   color: #fff;
-  align-self: flex-end;
   margin: 5px;
   padding: 10px;
   border-radius: 10px;
+  align-self: flex-start;
 }
 
 .chat-input {

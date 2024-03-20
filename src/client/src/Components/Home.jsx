@@ -10,6 +10,8 @@ function Home() {
   const [chats, setChats] = useState(location.state.user.chats);
   const [currChatIdx, setCurrChatIdx] = useState(0);
   const [query, setQuery] = useState('');
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
   const chatMessagesRef = useRef(null);
 
   const createChat = async () => {
@@ -75,6 +77,27 @@ function Home() {
     } catch (e) {console.log(e)}
   };
 
+  const renameChat = async (chatIdx) => {
+    try {
+      await axios.patch(`http://localhost:8000/api/chats/${chatIdx}`, {"title": newTitle}, {
+        "headers": {"Authorization": `Bearer ${location.state.token}`}
+      }).then(res => {
+        if (res.status === 200) {
+          const newChats = chats.map((chat, idx) => {
+            if (idx === chatIdx) {
+              return {"title": newTitle, "history": chat.history};
+            }
+            return chat;
+          });
+          setChats(newChats);
+          setIsEditingTitle(false);
+        } else {
+          console.log(res.data.error);
+        }
+      })
+    } catch (e) {console.log(e)}
+  }
+
   function keyHandler() {
     let handle = document.querySelector(".message-input");
     handle.addEventListener("keydown", keyDownHandler);
@@ -126,24 +149,40 @@ function Home() {
         {
           (() => {
             if (chats.length > 0) {
-              return (
-                <div className="chat-header">
-                  <h2>{chats[currChatIdx].title}</h2>
-                  <hr></hr>
-                </div>
-              )
+              if (isEditingTitle) {
+                return (
+                  <div className="chat-header">
+                    <input
+                      className="chat-header-input"
+                      type="text"
+                      onChange={(e) => setNewTitle(e.target.value)}
+                      onBlur={() => setIsEditingTitle(false)}
+                      onKeyDown={(e) => {if (e.key === "Enter") {renameChat(currChatIdx)}}}
+                      placeholder={`${chats[currChatIdx].title}`}
+                      autoFocus
+                    />
+                  </div>
+                )
+              } else {
+                return (
+                  <div className="chat-header">
+                    <h2 onClick={() => setIsEditingTitle(true)}>{chats[currChatIdx].title}</h2>
+                    <hr></hr>
+                  </div>
+                )
+              }
             }
           })()
         }
-        <div className="chat-messages" id="chat-messages">
+        <div className="chat-messages">
           {
             (() => {
               if (chats.length > 0) {
                 return (
                 chats[currChatIdx].history.map((qa, index) => (
                   <div key={index} className="chat-message">
-                    <div className="user-message">{qa.query}</div>
-                    <div className="response-message">{qa.response}</div>
+                    <p className="user-message">{qa.query}</p>
+                    <p className="response-message">{qa.response}</p>
                   </div>
                 )));
               }
