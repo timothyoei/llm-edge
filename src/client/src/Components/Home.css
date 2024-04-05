@@ -87,6 +87,12 @@
   border-top: 1px solid #ccc;
 }
 
+/* CHAT LOADING STATUS */
+.chat-loading-status {
+  text-align: center;
+  margin: 5px 0px;
+}
+
 .message-input {
   flex: 1;
   padding: 8px;

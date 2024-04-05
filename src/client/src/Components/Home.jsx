@@ -12,6 +12,7 @@ function Home() {
   const [query, setQuery] = useState('');
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [newTitle, setNewTitle] = useState('');
+  const [isSendingQuery, setIsSendingQuery] = useState(false);
   const chatMessagesRef = useRef(null);
 
   const createChat = async () => {
@@ -34,8 +35,11 @@ function Home() {
 
   const sendQuery = async () => {
     if (query.trim() !== '') {
+      setIsSendingQuery(true);
+      const q = query;
+      setQuery("");
       try {
-        await axios.post(`http://localhost:8000/api/chats/${currChatIdx}`, {"query": query}, {
+        await axios.post(`http://localhost:8000/api/chats/${currChatIdx}`, {"query": q}, {
           "headers": {
             "Authorization": `Bearer ${location.state.token}`
           }
@@ -51,7 +55,7 @@ function Home() {
           } else if (res.status === 200) {
             const newChats = chats.map((chat, idx) => {
               if (idx === currChatIdx) {
-                return {"title": chats[idx].title, "history": [...chats[idx].history, {"query": query, "response": res.data.response}]};
+                return {"title": chats[idx].title, "history": [...chats[idx].history, {"query": q, "response": res.data.response}]};
               }
               return chat;
             });
@@ -61,8 +65,8 @@ function Home() {
       } catch (e) {
         console.log(e);
       }
-      setQuery("");
     }
+    setIsSendingQuery(false);
   };
 
   const deleteChat = async (chatIdx) => {
@@ -197,8 +201,21 @@ function Home() {
           />
           <button onClick={sendQuery} className="send-button">
             Send
-          </button>
+          </button>        
         </div>
+        <div className="chat-loading-status">
+            {
+              (() => {
+                if (isSendingQuery) {
+                  return (
+                    <h2 className="chat-loading-status-text">
+                      Generating response
+                    </h2>
+                  )
+                }
+              })()
+            }
+          </div>
       </div>
     </div>
   );
