@@ -76,6 +76,7 @@ function Home() {
       }).then(res => {
         if (res.status === 200) {
           setChats(chats.filter((chat, idx) => idx !== chatIdx));
+          setCurrChatIdx(currChatIdx === 0 ? 0 : currChatIdx - 1);
         } else {console.log(res.data.error)}
       }).catch(e => {console.log(e)});
     } catch (e) {console.log(e)}
